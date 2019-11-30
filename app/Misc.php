@@ -8,7 +8,7 @@ function id_tag_combine($ids, $tags) {
         $i0++;
     }
     foreach ($tags as $tag) {
-        $fixed[$i1]['tags'] = $tag;
+        $fixed[$i1]['tags'] = strtolower($tag);
         $i1++;
     }
     return $fixed;
@@ -76,14 +76,19 @@ function recursive_replace($array, $target, $is_update = false, $updt_tag = null
     return $sub_arr;
 }
 
+function refresh_tag_str($tag_str) { // Removes empty tag values from tags string
+    $tag_array = tag_arr_gen($tag_str);
+    return implode(", ", array_filter($tag_array));
+}
+
 function tag_arr_gen($tag_str) {
-    $tag_array = explode(',', $tag_str);
+    $tag_array = explode(',', strtolower($tag_str));
     foreach ($tag_array as &$tag ) $tag = trim(preg_replace('/\s+/', ' ', $tag)); // magic : https://www.techfry.com/php-tutorial/how-to-remove-whitespace-characters-in-a-string-in-php-trim-function
     return $tag_array;
 }
 
 function tag_str_gen($tag_str) {
-    $tag_array = explode(',', $tag_str);
+    $tag_array = explode(',', strtolower($tag_str));
     foreach ($tag_array as &$tag ) $tag = trim(preg_replace('/\s+/', ' ', $tag)); // magic : https://www.techfry.com/php-tutorial/how-to-remove-whitespace-characters-in-a-string-in-php-trim-function
     return implode(", ", $tag_array);
 }

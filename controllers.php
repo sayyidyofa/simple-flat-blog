@@ -26,12 +26,8 @@ function get_kumis() { // PHP variable scoping is bullshit
 
 
 /*public functions start*/
-function list_posts() {
-    render_posts_index();
-}
-
-function show_post($id) {
-    render_single_post($id);
+function public_home($action = null) {
+    public_controller($action);
 }
 /*public functions stop*/
 

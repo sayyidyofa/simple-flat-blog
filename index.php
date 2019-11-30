@@ -8,11 +8,11 @@ session_start();
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 if ('/' === $uri || '' === $uri) {
-    list_posts();
+    public_home();
 }
 
 elseif (('/show' === $uri || '/show/' === $uri) && isset($_GET['id']) && '' != $_GET['id']) {
-    show_post($_GET['id']);
+    public_home('show');
 }
 
 elseif ('/login' === $uri ||'/login/' === $uri) {

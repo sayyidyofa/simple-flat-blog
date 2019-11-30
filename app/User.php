@@ -79,12 +79,12 @@ function user_controller($action = null) {
             unset($_SESSION['reply']); // So that status only shows once
         }
         elseif (isset($action) && $action === 'create_tag' && isset($_POST['tag_name'])) {
-            create_tag($_POST['tag_name']);
+            $_SESSION['reply'] = create_tag($_POST['tag_name']);
             header('location: /user/tags');
         }
         elseif (isset($action) && $action === 'edit_tag') {
             if (isset($_POST['tag_name']) && isset($_GET['tag_id'])) {
-                edit_tag($_GET['tag_id'], $_POST['tag_name']);
+                $_SESSION['reply'] = edit_tag($_GET['tag_id'], $_POST['tag_name']);
                 header('location: /user/tags');
             }
             else {
@@ -101,7 +101,7 @@ function user_controller($action = null) {
             }
         }
         elseif (isset($action) && $action === 'delete_tag' && isset($_GET['tag_id'])) {
-            delete_tag($_GET['tag_id']);
+            $_SESSION['reply'] = delete_tag($_GET['tag_id']);
             header('location: /user/tags');
         }
         else { // If not triggered properly, fallback to /user
@@ -132,39 +132,51 @@ function delete_post($id) {
 }
 
 function create_tag($tag_name) {
-    return insert_tags_sync_post(array($tag_name));
+    $tag_arr = array_diff(tag_arr_gen($tag_name), get_all_tags());
+    if (count($tag_arr) > 0) return insert_tags_sync_post(array(strtolower($tag_name)));
+    else return 'Tag already exists';
 }
 
 function edit_tag($id, $tag_name) {
     $target_tag = get_single_tag($id)['tag_name'];
-    $fixed_tags_arr = recursive_replace(
-        extract_index(get_all_posts(), "tags"),
-        $target_tag,
-        true,
-        $tag_name);
-    $ids_and_fixed_tags = id_tag_combine(
-        extract_index(get_all_posts(), "post_id"),
-        $fixed_tags_arr);
-    error_log(print_r($ids_and_fixed_tags, true));
+    $tag_name = strtolower($tag_name);
+    if ($target_tag === $tag_name) return 'Tag remains unedited';
+    else {
+        try {
+            $fixed_tags_arr = array_filter(recursive_replace(
+                extract_index(get_all_posts(), "tags"),
+                $target_tag,
+                true,
+                $tag_name));
+            $ids_and_fixed_tags = id_tag_combine(
+                extract_index(get_all_posts(), "post_id"),
+                $fixed_tags_arr);
+            /*error_log(print_r($ids_and_fixed_tags, true));*/
 
-    foreach ($ids_and_fixed_tags as $key_value) {
-        error_log(print_r($key_value['post_id']." : ".$key_value['tags'], true));
-        update_post_sync_tags($key_value['post_id'], $key_value['tags']);
+            foreach ($ids_and_fixed_tags as $key_value) {
+                /*error_log(print_r($key_value['post_id']." : ".$key_value['tags'], true));*/
+                update_post_sync_tags($key_value['post_id'], refresh_tag_str($key_value['tags']));
+            }
+            update_tag($id, $tag_name);
+            return 'success';
+        }
+        catch (Exception $exception) {
+            return $exception->getTraceAsString();
+        }
     }
-
 }
 
 function delete_tag($id) {
     $target_tag = get_single_tag($id)['tag_name'];
     $tags_arr = extract_index(get_all_posts(), "tags");
-    $fixed_tags_arr = recursive_replace($tags_arr, $target_tag);
+    $fixed_tags_arr = array_filter(recursive_replace($tags_arr, $target_tag));
     $post_ids = extract_index(get_all_posts(), "post_id");
     $ids_and_fixed_tags = id_tag_combine($post_ids, $fixed_tags_arr);
     error_log(print_r($ids_and_fixed_tags, true));
 
     foreach ($ids_and_fixed_tags as $key_value) {
         error_log(print_r($key_value['post_id']." : ".$key_value['tags'], true));
-        update_post_sync_tags($key_value['post_id'], $key_value['tags']);
+        update_post_sync_tags($key_value['post_id'], refresh_tag_str($key_value['tags']));
     }
     return remove_tag($id);
 }
