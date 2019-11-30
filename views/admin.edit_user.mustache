@@ -1,0 +1,36 @@
+{{> public.header }}
+
+<h3>Edit User</h3>
+<div class="ui equal width padded grid">
+    <div class="row">
+        <div class="column">
+            <form action="/admin/edit_user?user_id={{ user_id }}" method="post" class="ui form">
+                <div class="field">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" required placeholder="Name" id="name" value="{{ uname }}"><br>
+                </div>
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" required placeholder="Username" id="username" value="{{ username }}"><br>
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password"><br>
+                    <p>If the password field is left blank, user's password will remain unchanged</p>
+                </div>
+                <button class="ui primary button" type="submit" onclick="hashThenSend(document.getElementById('password').value)">Edit User</button>
+            </form>
+        </div>
+        <div class="column"></div>
+    </div>
+</div>
+
+<a href="/admin">Go back</a>
+<script src="../views/js/md5.js"></script>
+<script>
+    function hashThenSend(plaintext) {
+        if (plaintext !== null && plaintext !== undefined && plaintext !== "")
+            document.getElementById('password').value = md5(plaintext);
+    }
+</script>
+{{> public.footer }}

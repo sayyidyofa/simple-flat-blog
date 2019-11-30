@@ -1,0 +1,17 @@
+{{> public.header }}
+
+<h1>List of Posts</h1>
+
+<div class="ui list">
+    {{#posts}}
+        <div class="item">
+            <i class="newspaper icon"></i>
+            <div class="content">
+                <a href="/show?id={{ post_id }}" class="header">{{ title }}</a>
+                <div class="description">{{ tags }}</div>
+            </div>
+        </div>
+    {{/posts}}
+</div>
+
+{{> public.footer }}

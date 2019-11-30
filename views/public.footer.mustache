@@ -1,0 +1,60 @@
+
+</div>
+</div>
+
+<div class="ui modal" id="pp_change">
+    <i class="close icon"></i>
+    <div class="header">
+        Profile Picture
+    </div>
+    <div class="content">
+        <div class="description">
+            <div class="ui header">Change your profile picture</div>
+            <br>
+        </div>
+        <br>
+        <div class="ui form">
+            <form action="/user/upload_pp" method="post" enctype="multipart/form-data">
+                <div class="field">
+                    <label for="name"></label>
+                    <input type="file" name="profile_image" accept="image/*" required><br>
+                </div>
+                <button type="submit" class="ui primary button">Upload</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://semantic-ui.com/javascript/library/tablesort.js"></script>
+<script>
+    $(document).ready(()=>{
+        $('table').tablesort();
+    });
+    $('.message .close')
+            .on('click', function() {
+                $(this)
+                        .closest('.message')
+                        .transition('fade')
+                ;
+            })
+    ;
+    function showModal(modal_id) {
+        $('#'+modal_id).modal('show');
+    }
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.4.0/showdown.min.js"></script>
+<script>
+    // Spawn markdown editor
+    // https://github.com/sparksuite/simplemde-markdown-editor
+    var simplemde = new SimpleMDE({ element: document.getElementById('content') });
+
+    // Render the Markdown in a post
+    // https://stackoverflow.com/questions/20808727/markdown-in-browser-via-showdown
+    var conv = new showdown.Converter();
+    var txt = document.getElementById('posted_content').innerHTML;
+    document.getElementById('posted_content').innerHTML = conv.makeHtml(txt);
+</script>
+</body>
+</html>

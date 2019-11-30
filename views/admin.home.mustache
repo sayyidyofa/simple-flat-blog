@@ -1,0 +1,27 @@
+{{> public.header }}
+<h1>Welcome back, Administrator</h1>
+<p>There exists {{ user_count }} users in this blog (excludes you)</p>
+
+<p>Users list: </p>
+<table class="ui selectable sortable celled table">
+    <tr class="center aligned">
+        <th class="sorted ascending">User ID</th>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Post Count</th>
+        <th>Photo path</th>
+        <th>Action</th>
+    </tr>
+    {{#users}}
+        <tr class="center aligned">
+            <td>{{ user_id }}</td>
+            <td>{{ username }}</td>
+            <td>{{ name }}</td>
+            <td>{{ post_count }}</td>
+            <td>{{ photo_path }}</td>
+            <td><a href="/admin/edit_user?user_id={{ user_id }}"><i class="edit icon"></i></a> | <a href="/admin/delete_user?user_id={{ user_id }}"><i class="x icon icon"></i></a></a></td>
+        </tr>
+    {{/users}}
+</table>
+
+{{> public.footer }}

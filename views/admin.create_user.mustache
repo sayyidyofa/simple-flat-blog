@@ -1,0 +1,33 @@
+{{> public.header }}
+
+<h3>Create a user</h3>
+<div class="ui equal width padded grid">
+    <div class="row">
+        <div class="column">
+            <form action="/admin/create_user" method="post" class="ui form">
+                <div class="field">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" required placeholder="Name" id="name"><br>
+                </div>
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" required placeholder="Username" id="username"><br>
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" required id="password"><br>
+                </div>
+                <button class="ui primary button" type="submit" onclick="hashThenSend(document.getElementById('password').value)">Create User</button>
+            </form>
+        </div>
+        <div class="column"></div>
+    </div>
+</div>
+
+<script src="../views/js/md5.js"></script>
+<script>
+    function hashThenSend(plaintext) {
+        document.getElementById('password').value = md5(plaintext);
+    }
+</script>
+{{> public.footer }}

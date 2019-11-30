@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{{ title }}</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" type="text/css">
+        <link rel="stylesheet" href="../views/css/style.css" type="text/css"/>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+        <script src="../views/js/script.js"></script>
+
+</head>
+<body>
+<!--<div><a href="/">Home</a></div>-->
+<div class="ui container">
+    <div class="ui tablet computer only padded grid" id="navbar">
+        <div class="ui top fixed borderless fluid huge menu">
+            <div class="ui container">
+                <a class="header item disabled">Simple Blog!</a>
+                <a href="/" class="item">Posts</a>
+                <a href="https://sayyidyofa.github.io" class="item" target="_blank">About</a>
+                {{#user_logout}}
+                    <div class="right menu"><a href="/logout" class="item">Logout</a></div>
+                {{/user_logout}}
+            </div>
+        </div>
+    </div>
+    {{#user_sidebar}}
+        {{> user.sidebar}}
+    {{/user_sidebar}}
+    {{#admin_sidebar}}
+        {{> admin.sidebar}}
+    {{/admin_sidebar}}
+    <div style="padding-top: 100px; padding-left: 20px;">
+        {{ error }}
+        {{ reply }}
+
