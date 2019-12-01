@@ -7,7 +7,11 @@ session_start();
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-if ('/' === $uri || '' === $uri) {
+if (strpos($uri, 'api')) { // API handler
+    api_router($uri);
+}
+
+elseif ('/' === $uri || '' === $uri) {
     public_home();
 } elseif (('/show' === $uri || '/show/' === $uri) && isset($_GET['id']) && '' != $_GET['id']) {
     public_home('show');
@@ -61,10 +65,6 @@ elseif (strpos($uri, 'user')) { // The '/user' route has some children
         user_home('delete_tag');
 
     else user_home(); // If delete or update is not triggered properly, fallback to user home
-}
-
-elseif (strpos($uri, 'api')) { // API handler
-    api_router($uri);
 }
 
 else {

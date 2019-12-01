@@ -124,3 +124,4 @@ function upload_image($img, $user_id) { // $img = $_FILES['profile_image']
     unset($_SESSION['pp_upload_status']);
     return $status;
 }
+
