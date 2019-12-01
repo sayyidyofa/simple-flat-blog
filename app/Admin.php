@@ -24,7 +24,7 @@ function admin_controller($action = null) {
         }
         elseif (isset($action) && $action === 'create_user') {
             if (isset($_POST['name']) && isset($_POST['username']) && isset($_POST['password'])) {
-                $_SESSION['reply'] = create_user($_POST['username'], $_POST['password'], $_POST['name']);
+                $_SESSION['reply'] = api_create_user($_POST['username'], $_POST['password'], $_POST['name']);
                 //sync_pp_path("uploads/blank_profile.png", $_SESSION['last_id']);
                 sync_pp_path(null, null, true);
                 header('location: /admin');
@@ -40,7 +40,7 @@ function admin_controller($action = null) {
             $user = get_single_user($_GET['user_id']);
 
             if (isset($_GET['user_id']) && isset($_POST['name']) && isset($_POST['username'])) { // Password is optional
-                $_SESSION['reply'] = edit_user(
+                $_SESSION['reply'] = api_edit_user(
                     $_GET['user_id'], $_POST['username'], isset($_POST['password']) ? $_POST['password'] : null, $_POST['name']
                 );
                 header('location: /admin');
@@ -56,7 +56,7 @@ function admin_controller($action = null) {
             ));
         }
         elseif (isset($action) && $action === 'delete_user') {
-            $_SESSION['reply'] = delete_user($_GET['user_id']);
+            $_SESSION['reply'] = api_delete_user($_GET['user_id']);
             header('location: /admin');
         }
     }

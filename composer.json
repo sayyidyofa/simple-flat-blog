@@ -3,6 +3,7 @@
         "vlucas/phpdotenv": "^3.6",
         "mustache/mustache": "~2.5",
         "ext-pdo": "*",
-        "ezyang/htmlpurifier": "^4.12"
+        "ezyang/htmlpurifier": "^4.12",
+      "ext-json": "*"
     }
 }
