@@ -34,6 +34,9 @@
     <i class="close icon"></i>
     <div class="header">Create a new Tag</div>
     <div class="content">
+        <div class="description">
+            Tag string will be converted to lower case
+        </div>
         <div class="ui form">
             <form action="/user/create_tag" method="post">
                 <div class="field">
@@ -42,16 +45,6 @@
                 </div>
                 <button type="submit" class="ui primary button">Create</button>
             </form>
-        </div>
-    </div>
-</div>
-
-<div class="ui tiny modal" id="edit_tag">
-    <i class="close icon"></i>
-    <div class="header">Edit Tag</div>
-    <div class="content">
-        <div class="description">
-            If submitted value is blank, than previous value will be preserved.
         </div>
     </div>
 </div>

@@ -1,6 +1,9 @@
 <?php
 
-function public_controller($action = null) {
+function public_controller($action = null) { // XSS filtering with HTML Purifier
+    $config = HTMLPurifier_Config::createDefault();
+    $purifier = new HTMLPurifier($config);
+
     if (!isset($action)) {
         $posts = get_all_posts();
         echo get_kumis()->render('public.list', array(
@@ -17,7 +20,7 @@ function public_controller($action = null) {
             'post_title' => $post['title'],
             'created_at' => $post['timestamp'],
             'post_tags' => $post['tags'],
-            'post_content' => $post['content'],
+            'post_content' => $purifier->purify($post['content']),
             'created_by' => $post['name']
         ));
     }

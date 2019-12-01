@@ -34,7 +34,7 @@ CREATE TABLE `posts` (
   `title` varchar(50) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
   `tags` varchar(1000) DEFAULT 'Undefined',
-  `content` longtext NOT NULL
+  `content` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -48,7 +48,7 @@ CREATE TABLE `post_view` (
 ,`title` varchar(50)
 ,`timestamp` timestamp
 ,`tags` varchar(1000)
-,`content` longtext
+,`content` text
 ,`name` varchar(40)
 ,`user_id` int(11)
 );

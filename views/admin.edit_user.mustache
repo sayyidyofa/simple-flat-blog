@@ -27,10 +27,4 @@
 
 <a href="/admin">Go back</a>
 <script src="../views/js/md5.js"></script>
-<script>
-    function hashThenSend(plaintext) {
-        if (plaintext !== null && plaintext !== undefined && plaintext !== "")
-            document.getElementById('password').value = md5(plaintext);
-    }
-</script>
 {{> public.footer }}

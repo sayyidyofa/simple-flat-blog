@@ -15,7 +15,9 @@ function user_controller($action = null) {
                 'user_name' => $user_data['name'],
                 'pp_path' => $user_data['photo_path'],
                 'post_count' => $user_data['post_count'],
+                'user_posts_view' => $user_data['post_count'] > 0 ? true : false,
                 'user_posts' => $posts_by_user,
+                'profile_form' => $user_data,
                 'post_id' => isset($posts_by_user['post_id']) ? $posts_by_user['post_id'] : null
             ));
             unset($_SESSION['reply']); // So that status only shows once
@@ -38,7 +40,8 @@ function user_controller($action = null) {
                 'user_sidebar' => true,
                 'user_id' => $user_data['user_id'],
                 'user_name' => $user_data['name'],
-                'pp_path' => $user_data['photo_path']
+                'pp_path' => $user_data['photo_path'],
+                'profile_form' => $user_data
             ));
         }
         elseif (isset($action) && $action === 'edit_post') {
@@ -63,6 +66,17 @@ function user_controller($action = null) {
             $_SESSION['reply'] = delete_post($_GET['post_id']);
             header('location: /user');
         }
+        elseif (isset($action) && $action === 'edit_profile') {
+            if (isset($_POST['name']) && isset($_POST['username']) && isset($_POST['password']))
+                $_SESSION['reply'] = update_user($user_data['user_id'], $_POST['username'], $_POST['password'], $_POST['name']);
+            else
+                $_SESSION['reply'] = 'User data remains unchanged';
+            header('location: /user');
+        }
+        elseif (isset($action) && $action === 'delete_profile') {
+            $_SESSION['reply'] = remove_user($user_data['user_id']);
+            header('location: /logout');
+        }
         elseif (isset($action) && $action === 'crud_tags') {
             $tags_data = get_all_tags(true);
             echo get_kumis()->render('user.crud_tag', array(
@@ -74,7 +88,8 @@ function user_controller($action = null) {
                 'user_name' => $user_data['name'],
                 'pp_path' => $user_data['photo_path'],
                 'post_count' => $user_data['post_count'],
-                'tags_data' => $tags_data
+                'tags_data' => $tags_data,
+                'profile_form' => $user_data
             ));
             unset($_SESSION['reply']); // So that status only shows once
         }

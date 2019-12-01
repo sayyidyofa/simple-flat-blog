@@ -8,6 +8,11 @@
             <i class="camera icon"></i>
             Change
         </button>
+        <br>
+        <button class="mini ui button" style="margin-top: 8px" onclick="showModal('profile_change');">
+            <i class="user icon"></i>
+            Change
+        </button>
     </div>
     <!--<a class="item" style="
     padding-top: 36px;">
@@ -25,3 +30,40 @@
         Tags
     </a>
 </div>
+
+{{# profile_form}}
+    <div class="ui modal" id="profile_change">
+        <i class="close icon"></i>
+        <div class="header">
+            User Profile
+        </div>
+        <div class="content">
+            <div class="ui form">
+                <form action="/user/edit_profile" method="post">
+                    <div class="field">
+                        <label for="name">Name</label>
+                        <input type="text" name="name" required placeholder="Name" id="name" value="{{ name }}"><br>
+                    </div>
+                    <div class="field">
+                        <label for="username">Username</label>
+                        <input type="text" name="username" required placeholder="Username" id="username" value="{{ username }}"><br>
+                    </div>
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password"><br>
+                        <p>If the password field is left blank, user's password will remain unchanged</p>
+                    </div>
+                    <button class="ui primary button" type="submit" onclick="hashThenSend(document.getElementById('password').value)">Edit User</button>
+                </form>
+                <form action="/user/delete_profile" method="post">
+                    <div class="field">
+                        <p>Delete your profile</p>
+                    </div>
+                    <button type="submit" class="ui red button">Delete Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{{/profile_form}}
+
+

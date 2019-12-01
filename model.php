@@ -19,7 +19,7 @@ function close_database_connection(&$connection) {
 function get_all_posts() {
     $connection = open_database_connection();
 
-    $result = $connection->query('SELECT * from posts');
+    $result = $connection->query('SELECT * from post_view');
 
     $posts = [];
     while ($row = $result->fetch(PDO::FETCH_ASSOC)) {

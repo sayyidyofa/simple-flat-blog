@@ -76,7 +76,7 @@ function recursive_replace($array, $target, $is_update = false, $updt_tag = null
     return $sub_arr;
 }
 
-function refresh_tag_str($tag_str) { // Removes empty tag values from tags string
+function refresh_tag_str($tag_str) { // Removes empty tag values from tags string https://www.thecodedeveloper.com/remove-empty-array-elements-and-reindex/
     $tag_array = tag_arr_gen($tag_str);
     return implode(", ", array_filter($tag_array));
 }

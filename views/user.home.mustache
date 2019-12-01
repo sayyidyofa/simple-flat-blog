@@ -3,22 +3,25 @@
 <h1>Welcome back, {{ user_name }}</h1>
 <p>You have {{ post_count }} posts published</p>
 
-<p>Your posts: </p>
-<table class="ui selectable sortable celled table">
-    <tr class="center aligned">
-        <th>Title</th>
-        <th class="sorted ascending">Timestamp</th>
-        <th>Tags</th>
-        <th>Action</th>
-    </tr>
-    {{#user_posts}}
+{{#user_posts_view}}
+    <p>Your posts: </p>
+    <table class="ui selectable sortable celled table">
         <tr class="center aligned">
-            <td>{{ title }}</td>
-            <td>{{ timestamp }}</td>
-            <td>{{ tags }}</td>
-            <td><a href="/user/edit_post?post_id={{ post_id }}"><i class="edit icon"></i></a> | <a href="/user/delete_post?post_id={{ post_id }}"><i class="x icon icon"></i></a></td>
+            <th>Title</th>
+            <th class="sorted ascending">Timestamp</th>
+            <th>Tags</th>
+            <th>Action</th>
         </tr>
-    {{/user_posts}}
-</table>
+        {{#user_posts}}
+            <tr class="center aligned">
+                <td>{{ title }}</td>
+                <td>{{ timestamp }}</td>
+                <td>{{ tags }}</td>
+                <td><a href="/user/edit_post?post_id={{ post_id }}"><i class="edit icon"></i></a> | <a href="/user/delete_post?post_id={{ post_id }}"><i class="x icon icon"></i></a></td>
+            </tr>
+        {{/user_posts}}
+    </table>
+{{/user_posts_view}}
+
 
 {{> public.footer }}
