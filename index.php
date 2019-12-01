@@ -8,22 +8,16 @@ session_start();
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 if ('/' === $uri || '' === $uri) {
-    list_posts();
-}
-
-elseif (('/show' === $uri || '/show/' === $uri) && isset($_GET['id']) && '' != $_GET['id']) {
-    show_post($_GET['id']);
+    public_home();
+} elseif (('/show' === $uri || '/show/' === $uri) && isset($_GET['id']) && '' != $_GET['id']) {
+    public_home('show');
 }
 
 elseif ('/login' === $uri ||'/login/' === $uri) {
     login_form(isset($_SESSION['error']) ? $_SESSION['error'] : null);
-}
-
-elseif (('/login_post' === $uri ||'/login_post/' === $uri) && isset($_POST['username']) && isset($_POST['password'])) {
+} elseif (('/login_post' === $uri ||'/login_post/' === $uri) && isset($_POST['username']) && isset($_POST['password'])) {
     authenticate_login($_POST['username'], $_POST['password']);
-}
-
-elseif ('/logout' === $uri ||'/logout/' === $uri) {
+} elseif ('/logout' === $uri ||'/logout/' === $uri) {
     user_logout();
 }
 
@@ -45,6 +39,10 @@ elseif (strpos($uri, 'user')) { // The '/user' route has some children
 
     elseif ('/user/upload_pp' === $uri || '/user/upload_pp/' === $uri)
         user_home('upload_pp');
+    elseif ('/user/edit_profile' === $uri || '/user/edit_profile/' === $uri)
+        user_home('edit_profile');
+    elseif ('/user/delete_profile' === $uri || '/user/delete_profile/' === $uri)
+        user_home('delete_profile');
 
     elseif ('/user/create_post' === $uri || '/user/create_post/' === $uri)
         user_home('create_post');

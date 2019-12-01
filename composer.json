@@ -1,6 +1,8 @@
 {
     "require": {
         "vlucas/phpdotenv": "^3.6",
-        "mustache/mustache": "~2.5"
+        "mustache/mustache": "~2.5",
+        "ext-pdo": "*",
+        "ezyang/htmlpurifier": "^4.12"
     }
 }
