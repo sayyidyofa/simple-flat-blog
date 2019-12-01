@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . './controllers.php';
+require_once dirname(__FILE__) . '/controllers.php';
 
 function api_router($uri) {
     if ('/api/admin/users' === $uri || '/admin/users/' === $uri)
