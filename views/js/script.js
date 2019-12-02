@@ -59,14 +59,6 @@ $(document).ready(()=>{
     $('table').tablesort();
 });
 
-$('.message .close')
-    .on('click', function() {
-        $(this)
-            .closest('.message')
-            .transition('fade')
-        ;
-    });
 
-function showModal(modal_id) {
-    $('#'+modal_id).modal('show');
-}
+
+
