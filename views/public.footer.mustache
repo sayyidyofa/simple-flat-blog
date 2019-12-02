@@ -27,7 +27,16 @@
 
 <script src="https://semantic-ui.com/javascript/library/tablesort.js"></script>
 <script>
-
+    $('.message .close')
+            .on('click', function() {
+                $(this)
+                        .closest('.message')
+                        .transition('fade')
+                ;
+            });
+    function showModal(modal_id) {
+        $('#'+modal_id).modal('show');
+    }
 </script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
