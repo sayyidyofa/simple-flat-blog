@@ -1,8 +1,7 @@
 <?php
-
 function api_admin_controller($action = null) {
 
-    $api_key = getenv('API_KEY');
+    $api_key = get_api_key();
 
     if (isset($_POST['api_key']) && $_POST['api_key'] === $api_key) {
         $users_data = get_all_user_view();      // Removes admin
@@ -44,14 +43,6 @@ function api_admin_controller($action = null) {
     else {
         echo response_error();
     }
-}
-
-function response_error() {
-    return json_encode(array('status'=>'error'));
-}
-
-function response_success() {
-    return json_encode(array('status'=>'success'));
 }
 
 function api_create_user($username, $password, $name) {
