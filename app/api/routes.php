@@ -1,13 +1,25 @@
 <?php
 
 require_once dirname(__FILE__) . '/controllers/auth.php';
+require_once dirname(__FILE__) . '/controllers/public.php';
 require_once dirname(__FILE__) . '/controllers/admin.php';
 require_once dirname(__FILE__) . '/controllers/misc.php';
+
+$post_id = null;
 
 function api_router($uri) {
 
     if ('/api/auth' === $uri || '/api/auth/' === $uri && isset($_POST['username']) && isset($_POST['password']))
         api_auth_controller('auth');
+
+    elseif ('/api/posts' === $uri || '/api/posts/' === $uri) {
+        api_public_controller('list');
+    }
+
+    elseif (strpos($uri, 'api/post/')  /*'/api/post' === $uri || '/api/post/' === $uri && isset($_POST['post_id'])*/) {
+        $GLOBALS['post_id'] = str_replace("/api/post/", "", $uri);
+        api_public_controller('show');
+    }
 
     elseif ('/api/admin/users' === $uri || '/admin/users/' === $uri)
         api_admin_controller('list_users');
