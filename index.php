@@ -11,6 +11,10 @@ if (strpos($uri, 'api')) { // API handler
     api_router($uri);
 }
 
+elseif ('/.env' === $uri || '/.git/' === $uri) {
+    not_found_404($uri);
+}
+
 elseif ('/' === $uri || '' === $uri) {
     public_home();
 } elseif (('/show' === $uri || '/show/' === $uri) && isset($_GET['id']) && '' != $_GET['id']) {
