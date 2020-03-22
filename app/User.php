@@ -30,8 +30,8 @@ function user_controller($action = null) {
             header('location: /user');
         }
         elseif (isset($action) && $action === 'create_post') {
-            if (isset($_POST['title']) && isset($_POST['tags']) && isset($_POST['content'])) {
-                $_SESSION['reply'] = create_post($_SESSION['user_id'], $_POST['title'], $_POST['tags'], $_POST['content']);
+            if (isset($_POST['title']) && isset($_POST['content'])) {
+                $_SESSION['reply'] = create_post($_SESSION['user_id'], $_POST['title'], $_POST['content']);
                 header('location: /user');
             }
             else echo get_kumis()->render('user.create_post', array(
@@ -46,8 +46,8 @@ function user_controller($action = null) {
         }
         elseif (isset($action) && $action === 'edit_post') {
             $post = get_single_post($_GET['post_id']);
-            if (isset($_GET['post_id']) && isset($_POST['title']) && isset($_POST['tags']) && isset($_POST['content'])) {
-                $_SESSION['reply'] = edit_post($_GET['post_id'], $_POST['title'], $_POST['tags'], $_POST['content']);
+            if (isset($_GET['post_id']) && isset($_POST['title']) && isset($_POST['content'])) {
+                $_SESSION['reply'] = edit_post($_GET['post_id'], $_POST['title'], $_POST['content']);
                 header('location: /user');
             }
             else echo get_kumis()->render('user.edit_post', array(
@@ -77,48 +77,6 @@ function user_controller($action = null) {
             $_SESSION['reply'] = remove_user($user_data['user_id']);
             header('location: /logout');
         }
-        elseif (isset($action) && $action === 'crud_tags') {
-            $tags_data = get_all_tags(true);
-            echo get_kumis()->render('user.crud_tag', array(
-                'reply' => isset($_SESSION['reply']) ? $_SESSION['reply'] : null,
-                'title' => 'Manage Tags',
-                'user_logout' => true,
-                'user_sidebar' => true,
-                'user_id' => $user_data['user_id'],
-                'user_name' => $user_data['name'],
-                'pp_path' => $user_data['photo_path'],
-                'post_count' => $user_data['post_count'],
-                'tags_data' => $tags_data,
-                'profile_form' => $user_data
-            ));
-            unset($_SESSION['reply']); // So that status only shows once
-        }
-        elseif (isset($action) && $action === 'create_tag' && isset($_POST['tag_name'])) {
-            $_SESSION['reply'] = create_tag($_POST['tag_name']);
-            header('location: /user/tags');
-        }
-        elseif (isset($action) && $action === 'edit_tag') {
-            if (isset($_POST['tag_name']) && isset($_GET['tag_id'])) {
-                $_SESSION['reply'] = edit_tag($_GET['tag_id'], $_POST['tag_name']);
-                header('location: /user/tags');
-            }
-            else {
-                echo get_kumis()->render('user.edit_tag', array(
-                    'title' => 'Manage Tags',
-                    'user_logout' => true,
-                    'user_sidebar' => true,
-                    'user_id' => $user_data['user_id'],
-                    'user_name' => $user_data['name'],
-                    'pp_path' => $user_data['photo_path'],
-                    'tag_id' => $_GET['tag_id'],
-                    'tag_name' => get_single_tag($_GET['tag_id'])['tag_name']
-                ));
-            }
-        }
-        elseif (isset($action) && $action === 'delete_tag' && isset($_GET['tag_id'])) {
-            $_SESSION['reply'] = delete_tag($_GET['tag_id']);
-            header('location: /user/tags');
-        }
         else { // If not triggered properly, fallback to /user
             header('location: /user');
         }
@@ -129,69 +87,16 @@ function user_controller($action = null) {
     }
 }
 
-function create_post($user_id, $title, $tags, $content) {
-    $tag_arr = array_diff(tag_arr_gen($tags), get_all_tags()); // https://www.w3schools.com/php/func_array_diff.asp
-    if ('success' === insert_tags_sync_post($tag_arr) && 'success' === insert_post($user_id, $title, $tags, $content)) return "success";
+function create_post($user_id, $title, $content) {
+    if ('success' === insert_post($user_id, $title, $content)) return "success";
     else return "error";
 }
 
-function edit_post($id, $title, $tags, $content) {
-    $tag_arr = array_diff(tag_arr_gen($tags), get_all_tags());
-    $tag_str = tag_str_gen($tags);
-    if ('success' === insert_tags_sync_post($tag_arr) && 'success' === update_post($id, $title, $tag_str, $content)) return "success";
+function edit_post($id, $title, $content) {
+    if ('success' === update_post($id, $title, $content)) return "success";
     else return "error";
 }
 
 function delete_post($id) {
     return remove_post($id);
-}
-
-function create_tag($tag_name) {
-    $tag_arr = array_diff(tag_arr_gen($tag_name), get_all_tags());
-    if (count($tag_arr) > 0) return insert_tags_sync_post(array(strtolower($tag_name)));
-    else return 'Tag already exists';
-}
-
-function edit_tag($id, $tag_name) {
-    $target_tag = get_single_tag($id)['tag_name'];
-    $tag_name = strtolower($tag_name);
-    if ($target_tag === $tag_name) return 'Tag remains unedited';
-    else {
-        try {
-            $fixed_tags_arr = array_filter(recursive_replace(
-                extract_index(get_all_posts(), "tags"),
-                $target_tag,
-                true,
-                $tag_name));
-            $ids_and_fixed_tags = id_tag_combine(
-                extract_index(get_all_posts(), "post_id"),
-                $fixed_tags_arr);
-            /*error_log(print_r($ids_and_fixed_tags, true));*/
-
-            foreach ($ids_and_fixed_tags as $key_value) {
-                /*error_log(print_r($key_value['post_id']." : ".$key_value['tags'], true));*/
-                update_post_sync_tags($key_value['post_id'], refresh_tag_str($key_value['tags']));
-            }
-            update_tag($id, $tag_name);
-            return 'success';
-        }
-        catch (Exception $exception) {
-            return $exception->getTraceAsString();
-        }
-    }
-}
-
-function delete_tag($id) {
-    $target_tag = get_single_tag($id)['tag_name'];
-    $tags_arr = extract_index(get_all_posts(), "tags");
-    $fixed_tags_arr = array_filter(recursive_replace($tags_arr, $target_tag));
-    $post_ids = extract_index(get_all_posts(), "post_id");
-    $ids_and_fixed_tags = id_tag_combine($post_ids, $fixed_tags_arr);
-    error_log(print_r($ids_and_fixed_tags, true));
-
-    foreach ($ids_and_fixed_tags as $key_value) {
-        error_log(print_r($key_value['post_id']." : ".$key_value['tags'], true));
-        update_post_sync_tags($key_value['post_id'], refresh_tag_str($key_value['tags']));
-    }
-    return remove_tag($id);
 }

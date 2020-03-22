@@ -45,13 +45,27 @@ function get_single_post($id) {
     return $row;
 }
 
-function get_login($username, $password) {
+function validate_login($username, $password) {
     $connection = open_database_connection();
 
-    $query = 'SELECT * FROM user WHERE username=:username AND password=:password';
+    $query = 'SELECT password FROM user WHERE username=:username';
     $statement = $connection->prepare($query);
     $statement->bindValue(':username', $username, PDO::PARAM_STR);
-    $statement->bindValue(':password', $password, PDO::PARAM_STR);
+    $statement->execute();
+
+    $row = $statement->fetch(PDO::FETCH_ASSOC);
+
+    close_database_connection($connection);
+
+    return password_verify($password, $row["password"]);
+}
+
+function get_user_by_uname($uname) {
+    $connection = open_database_connection();
+
+    $query = 'SELECT * FROM user WHERE user.username=:username';
+    $statement = $connection->prepare($query);
+    $statement->bindValue(':username', $uname, PDO::PARAM_STR);
     $statement->execute();
 
     $row = $statement->fetch(PDO::FETCH_ASSOC);
@@ -106,15 +120,14 @@ function get_user_posts($user_id) {
     return $user_posts;
 }
 
-function insert_post($user_id, $title, $tags, $content) {
+function insert_post($user_id, $title, $content) {
     $connection = open_database_connection();
 
-    $query = 'INSERT INTO posts (user_id, title, tags, content) VALUES (:user_id, :title, :tags, :content)';
+    $query = 'INSERT INTO posts (user_id, title, content) VALUES (:user_id, :title, :content)';
     $statement = $connection->prepare($query);
 
     $statement->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $statement->bindValue(':title', $title, PDO::PARAM_STR);
-    $statement->bindValue(':tags', $tags, PDO::PARAM_STR);
     $statement->bindValue(':content', $content, PDO::PARAM_STR);
 
     if ($statement->execute()) $status = "success";
@@ -125,33 +138,17 @@ function insert_post($user_id, $title, $tags, $content) {
     return $status;
 }
 
-function update_post($id, $title, $tags, $content) {
+function update_post($id, $title, $content) {
     $connection = open_database_connection();
 
-    $query = 'UPDATE posts SET title=:title, tags=:tags, timestamp=current_timestamp(), content=:content WHERE posts.post_id=:id';
+    $query = 'UPDATE posts SET title=:title, timestamp=current_timestamp(), content=:content WHERE posts.post_id=:id';
     $statement = $connection->prepare($query);
 
     $statement->bindValue(':id', $id, PDO::PARAM_INT);
     $statement->bindValue(':title', $title, PDO::PARAM_STR);
-    $statement->bindValue(':tags', $tags, PDO::PARAM_STR);
     $statement->bindValue(':content', $content, PDO::PARAM_STR);
 
     error_log(print_r($query, true));
-    if ($statement->execute()) $status = "success";
-    else $status = implode(" ", $statement->errorInfo());
-
-    close_database_connection($connection);
-
-    return $status;
-}
-
-function update_post_sync_tags($id, $tags) {
-    $connection = open_database_connection();
-
-    $query = 'UPDATE posts SET tags=:tags, timestamp=current_timestamp() WHERE posts.post_id=:id';
-    $statement = $connection->prepare($query);
-    $statement->bindValue(':id', $id, PDO::PARAM_INT);
-    $statement->bindValue(':tags', $tags, PDO::PARAM_STR);
     if ($statement->execute()) $status = "success";
     else $status = implode(" ", $statement->errorInfo());
 
@@ -164,116 +161,6 @@ function remove_post($id) {
     $connection = open_database_connection();
 
     $query = 'DELETE FROM posts WHERE posts.post_id=:id';
-    $statement = $connection->prepare($query);
-    $statement->bindValue(':id', $id, PDO::PARAM_INT);
-
-    if ($statement->execute()) $status = "success";
-    else $status = implode(" ", $statement->errorInfo());
-
-    close_database_connection($connection);
-
-    return $status;
-}
-
-function get_all_tags($fetch_all = false) {
-    $connection = open_database_connection();
-
-    $result = $connection->query('SELECT * from tags');
-
-    $tags_arr = [];
-    if ($fetch_all === true) {
-        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-            $tags_arr[] = $row;
-        }
-    }
-    else {
-        while ($row = $result->fetch(PDO::FETCH_NUM)) {
-            $tags_arr[] = $row[1];
-        }
-    }
-
-    close_database_connection($connection);
-    return $tags_arr;
-}
-
-function get_single_tag($id) {
-    $connection = open_database_connection();
-
-    $query = 'SELECT * FROM tags WHERE tag_id=:id';
-    $statement = $connection->prepare($query);
-    $statement->bindValue(':id', $id, PDO::PARAM_INT);
-    $statement->execute();
-
-    $row = $statement->fetch(PDO::FETCH_ASSOC);
-
-    close_database_connection($connection);
-
-    return $row;
-}
-
-function insert_tag($tag_name) {
-    $connection = open_database_connection();
-
-    $query = 'INSERT INTO tags (tag_name) VALUES (:tag_name)';
-    $statement = $connection->prepare($query);
-
-    if ($statement->execute(array(
-        ':tag_name' => $tag_name
-    ))) $status = "success";
-    else $status = implode(" ", $statement->errorInfo());
-
-    close_database_connection($connection);
-
-    return $status;
-}
-
-function insert_tags_sync_post($tag_array) {
-    if (count($tag_array) === 0) return 'success';
-
-    $connection = open_database_connection();
-
-    $query = 'INSERT INTO tags (tag_name) VALUES (:tag_name)';
-    $statement = $connection->prepare($query);
-
-    foreach ($tag_array as $tag_name) {
-        try {
-            $statement->execute(array(':tag_name' => $tag_name));
-            $_SESSION['query_status'] = "success";
-        }
-        catch (PDOException $e) {
-            $_SESSION['query_status'] = implode(" ", $statement->errorInfo());
-        }
-    }
-
-    close_database_connection($connection);
-
-    $status = $_SESSION['query_status'];
-    unset($_SESSION['query_status']);
-    return $status;
-}
-
-function update_tag($id, $tag_name) {
-    $connection = open_database_connection();
-
-    $query = 'UPDATE tags SET tag_name=:tag_name WHERE tag_id=:id';
-
-    $statement = $connection->prepare($query);
-
-    $statement->bindValue(':tag_name', $tag_name, PDO::PARAM_STR);
-    $statement->bindValue(':id', $id, PDO::PARAM_INT);
-
-    if ($statement->execute()) $status = "success";
-    else $status = implode(" ", $statement->errorInfo());
-
-    close_database_connection($connection);
-
-    return $status;
-}
-
-function remove_tag($id) {
-    $connection = open_database_connection();
-
-    $query = 'DELETE FROM tags WHERE tags.tag_id=:id';
     $statement = $connection->prepare($query);
     $statement->bindValue(':id', $id, PDO::PARAM_INT);
 
@@ -332,7 +219,7 @@ function insert_user($username, $password, $name) {
 
     if ($statement->execute(array(
         ':username' => $username,
-        ':passwd' => $password,
+        ':passwd' => password_hash($password, PASSWORD_BCRYPT),
         ':uname' => $name
     ))) $status = "success";
     else $status = $statement->errorCode();
@@ -351,7 +238,7 @@ function update_user($id, $username, $password, $name) {
         $statement = $connection->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_INT);
         $statement->bindValue(':username', $username, PDO::PARAM_STR);
-        $statement->bindValue(':passwd', $password, PDO::PARAM_STR);
+        $statement->bindValue(':passwd', password_hash($password, PASSWORD_BCRYPT), PDO::PARAM_STR);
         $statement->bindValue(':uname', $name, PDO::PARAM_STR);
     }
     else {

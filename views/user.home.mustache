@@ -9,14 +9,12 @@
         <tr class="center aligned">
             <th>Title</th>
             <th class="sorted ascending">Timestamp</th>
-            <th>Tags</th>
             <th>Action</th>
         </tr>
         {{#user_posts}}
             <tr class="center aligned">
                 <td>{{ title }}</td>
                 <td>{{ timestamp }}</td>
-                <td>{{ tags }}</td>
                 <td><a href="/user/edit_post?post_id={{ post_id }}"><i class="edit icon"></i></a> | <a href="/user/delete_post?post_id={{ post_id }}"><i class="x icon icon"></i></a></td>
             </tr>
         {{/user_posts}}

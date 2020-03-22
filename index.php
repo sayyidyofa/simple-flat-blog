@@ -11,7 +11,7 @@ if (strpos($uri, 'api')) { // API handler
     api_router($uri);
 }
 
-elseif ('/.env' === $uri || '/.git/' === $uri) {
+elseif (strpos($uri, 'env')) {
     not_found_404($uri);
 }
 
@@ -58,15 +58,6 @@ elseif (strpos($uri, 'user')) { // The '/user' route has some children
         user_home('edit_post');
     elseif ('/user/delete_post' === $uri || '/user/delete_post/' === $uri && isset($_GET['post_id']))
         user_home('delete_post');
-
-    elseif ('/user/tags' === $uri || '/user/tags/' === $uri)
-        user_home('crud_tags');
-    elseif ('/user/create_tag' === $uri || '/user/create_tag/' === $uri)
-        user_home('create_tag');
-    elseif ('/user/edit_tag' === $uri || '/user/edit_tag/' === $uri && isset($_GET['tag_id'])) // PHP is starting to get really weird
-        user_home('edit_tag');
-    elseif ('/user/delete_tag' === $uri || '/user/delete_tag/' === $uri && isset($_GET['tag_id']))
-        user_home('delete_tag');
 
     else user_home(); // If delete or update is not triggered properly, fallback to user home
 }

@@ -9,9 +9,9 @@ function render_login($error) {
 }
 
 function do_auth($uname, $passwd) {
-    $user_cred = get_login($uname, $passwd);
-    if ($uname === $user_cred['username'] && $passwd === $user_cred['password']) {
-        $_SESSION['user_id'] = $user_cred['user_id'];
+    if (validate_login($uname, $passwd)) {
+        $user = get_user_by_uname($uname);
+        $_SESSION['user_id'] = $user['user_id'];
         if ($uname === 'admin') { // Check if the Administrator logs in.
             $_SESSION['admin'] = true;
             header('location: /admin');

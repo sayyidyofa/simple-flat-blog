@@ -41,7 +41,7 @@ function api_admin_controller($action = null) {
         }
     }
     else {
-        echo response_error();
+        echo response_error('Invalid request');
     }
 }
 

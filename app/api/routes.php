@@ -16,7 +16,7 @@ function api_router($uri) {
         api_public_controller('list');
     }
 
-    elseif (strpos($uri, 'api/post/')  /*'/api/post' === $uri || '/api/post/' === $uri && isset($_POST['post_id'])*/) {
+    elseif (strpos($uri, 'api/post/')) {
         $GLOBALS['post_id'] = str_replace("/api/post/", "", $uri);
         api_public_controller('show');
     }
@@ -29,6 +29,6 @@ function api_router($uri) {
         api_admin_controller('edit_user');
     elseif ('/api/admin/delete_user' === $uri || '/api/admin/delete_user/' === $uri && isset($_GET['user_id']))
         api_admin_controller('delete_user');
-    else echo response_error();
+    else echo response_error('Route not found');
 
 }

@@ -25,10 +25,10 @@
         <i class="pencil alternate icon"></i>
         New Post
     </a>
-    <a href="/user/tags" class="item">
+    <!--<a href="/user/tags" class="item">
         <i class="tags icon"></i>
         Tags
-    </a>
+    </a>-->
 </div>
 
 {{# profile_form}}
@@ -53,7 +53,7 @@
                         <input type="password" name="password" id="password"><br>
                         <p>If the password field is left blank, user's password will remain unchanged</p>
                     </div>
-                    <button class="ui primary button" type="submit" onclick="hashThenSend(document.getElementById('password').value)">Edit User</button>
+                    <button class="ui primary button" type="submit">Edit User</button>
                 </form>
                 <form action="/user/delete_profile" method="post">
                     <div class="field">
