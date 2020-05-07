@@ -85,7 +85,7 @@ CREATE TABLE `tags` (
 CREATE TABLE `user` (
   `user_id` int(11) NOT NULL,
   `username` varchar(20) NOT NULL,
-  `password` varchar(32) NOT NULL,
+  `password` varchar(60) NOT NULL,
   `name` varchar(40) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
